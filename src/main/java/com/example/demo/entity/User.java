@@ -31,6 +31,6 @@ public class User {
 
     private String role;
 
-    // Parameterized constructor (assigns fields only, no logic)
+    
   
 }
