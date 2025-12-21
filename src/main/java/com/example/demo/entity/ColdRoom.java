@@ -29,11 +29,4 @@ public class ColdRoom {
 
     private Double maxAllowed;
 
-    // Parameterized constructor WITHOUT id (as per requirement)
-    public ColdRoom(String name, String location, Double minAllowed, Double maxAllowed) {
-        this.name = name;
-        this.location = location;
-        this.minAllowed = minAllowed;
-        this.maxAllowed = maxAllowed;
-    }
 }
