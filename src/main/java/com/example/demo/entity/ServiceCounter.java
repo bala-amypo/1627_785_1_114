@@ -26,7 +26,7 @@ public class ServiceCounter {
     
     private boolean isActive;
 
-    // 
+    
     public ServiceCounter(String name, boolean isActive) {
         this.name = name;
         this.isActive = isActive;
