@@ -23,10 +23,10 @@ public class ServiceCounter {
 
     private String name;
 
-    // Used by findByIsActiveTrue()
+    
     private boolean isActive;
 
-    // Parameterized constructor without id
+    // 
     public ServiceCounter(String name, boolean isActive) {
         this.name = name;
         this.isActive = isActive;
