@@ -20,7 +20,7 @@ public class QueueServiceImpl implements QueueService {
     QueuePosition q = new QueuePosition();
     q.setToken(token);
     q.setPosition(pos);
-    return queueRepo.save(q);
+    return queueRepository.save(q);
 }
 
     public QueuePosition updateQueuePosition(Long tokenId, Integer position) {

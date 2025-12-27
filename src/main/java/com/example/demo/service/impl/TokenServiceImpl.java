@@ -67,7 +67,7 @@ public class TokenServiceImpl implements TokenService {
     TokenLog log = new TokenLog();
     log.setToken(token);
     log.setStatus(status);
-    logRepo.save(log);
+    logRepository.save(log);
 
     return token;
 }
