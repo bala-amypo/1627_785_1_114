@@ -52,29 +52,26 @@ public class TokenServiceImpl implements TokenService {
         return token;
     }
 
-    public Token updateStatus(Long tokenId, String newStatus) {
-        Token token = tokenRepository.findById(tokenId)
-            .orElseThrow(() -> new RuntimeException("Token not found"));
+    public Token updateStatus(Long id, String status) {
+    Token token = tokenRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Token not found"));
 
-        if (!isValidStatusTransition(token.getStatus(), newStatus)) {
-            throw new IllegalArgumentException("Invalid status transition");
-        }
+    token.setStatus(status);
 
-        token.setStatus(newStatus);
-        if ("COMPLETED".equals(newStatus) || "CANCELLED".equals(newStatus)) {
-            token.setCompletedAt(LocalDateTime.now());
-        }
-        
-        token = tokenRepository.save(token);
-
-        // Add log
-        TokenLog log = new TokenLog();
-        log.setToken(token);
-        log.setMessage("Status updated to " + newStatus);
-        logRepository.save(log);
-
-        return token;
+    if ("COMPLETED".equals(status)) {
+        token.setCompletedAt(LocalDateTime.now());
     }
+
+    tokenRepository.save(token);
+
+    TokenLog log = new TokenLog();
+    log.setToken(token);
+    log.setStatus(status);
+    logRepo.save(log);
+
+    return token;
+}
+
 
     public Token getToken(Long tokenId) {
         return tokenRepository.findById(tokenId)
