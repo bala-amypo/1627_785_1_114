@@ -44,7 +44,16 @@ public class TokenLog {
     
     private String message;
     private LocalDateTime loggedAt = LocalDateTime.now();
+private String status;   // ✅ ADD THIS
 
+    // getters & setters
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Token getToken() { return token; }
