@@ -16,6 +16,12 @@ public class QueueServiceImpl implements QueueService {
         this.queueRepository = queueRepository;
         this.tokenRepository = tokenRepository;
     }
+    public QueuePosition assign(Token token, int pos) {
+    QueuePosition q = new QueuePosition();
+    q.setToken(token);
+    q.setPosition(pos);
+    return queueRepo.save(q);
+}
 
     public QueuePosition updateQueuePosition(Long tokenId, Integer position) {
         if (position < 1) {
