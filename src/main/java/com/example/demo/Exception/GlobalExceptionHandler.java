@@ -1,86 +1,86 @@
+
 package com.example.demo.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
-    
+
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleResourceNotFoundException(
-            ResourceNotFoundException ex, WebRequest request) {
+    public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("timestamp", LocalDateTime.now());
-        errorDetails.put("message", ex.getMessage());
-        errorDetails.put("details", request.getDescription(false));
         errorDetails.put("status", HttpStatus.NOT_FOUND.value());
-        
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+        errorDetails.put("error", "Not Found");
+        errorDetails.put("message", ex.getMessage());
+        errorDetails.put("path", request.getDescription(false).replace("uri=", ""));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
     }
-    
-    @ExceptionHandler(InvalidTokenStatusException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidTokenStatusException(
-            InvalidTokenStatusException ex, WebRequest request) {
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Map<String, Object>> handleBadRequest(BadRequestException ex, WebRequest request) {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("timestamp", LocalDateTime.now());
-        errorDetails.put("message", ex.getMessage());
-        errorDetails.put("details", request.getDescription(false));
         errorDetails.put("status", HttpStatus.BAD_REQUEST.value());
-        
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        errorDetails.put("error", "Bad Request");
+        errorDetails.put("message", ex.getMessage());
+        errorDetails.put("path", request.getDescription(false).replace("uri=", ""));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
     }
-    
-    @ExceptionHandler(CounterNotActiveException.class)
-    public ResponseEntity<Map<String, Object>> handleCounterNotActiveException(
-            CounterNotActiveException ex, WebRequest request) {
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Map<String, Object>> handleUnauthorized(UnauthorizedException ex, WebRequest request) {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("timestamp", LocalDateTime.now());
+        errorDetails.put("status", HttpStatus.UNAUTHORIZED.value());
+        errorDetails.put("error", "Unauthorized");
         errorDetails.put("message", ex.getMessage());
-        errorDetails.put("details", request.getDescription(false));
-        errorDetails.put("status", HttpStatus.CONFLICT.value());
-        
-        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+        errorDetails.put("path", request.getDescription(false).replace("uri=", ""));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
     }
-    
+
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(
-            IllegalArgumentException ex, WebRequest request) {
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("timestamp", LocalDateTime.now());
-        errorDetails.put("message", ex.getMessage());
-        errorDetails.put("details", request.getDescription(false));
         errorDetails.put("status", HttpStatus.BAD_REQUEST.value());
-        
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-    }
-    
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, Object>> handleRuntimeException(
-            RuntimeException ex, WebRequest request) {
-        Map<String, Object> errorDetails = new HashMap<>();
-        errorDetails.put("timestamp", LocalDateTime.now());
+        errorDetails.put("error", "Bad Request");
         errorDetails.put("message", ex.getMessage());
-        errorDetails.put("details", request.getDescription(false));
-        errorDetails.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+        errorDetails.put("path", request.getDescription(false).replace("uri=", ""));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
     }
-    
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGlobalException(
-            Exception ex, WebRequest request) {
+    public ResponseEntity<Map<String, Object>> handleGeneral(Exception ex, WebRequest request) {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("timestamp", LocalDateTime.now());
-        errorDetails.put("message", "An unexpected error occurred");
-        errorDetails.put("details", request.getDescription(false));
         errorDetails.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+        errorDetails.put("error", "Internal Server Error");
+        errorDetails.put("message", "An unexpected error occurred");
+        errorDetails.put("path", request.getDescription(false).replace("uri=", ""));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
