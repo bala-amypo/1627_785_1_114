@@ -185,7 +185,7 @@ public class TokenServiceImpl implements TokenService {
 
         TokenLog log = new TokenLog();
         log.setToken(saved);
-        log.setMessage("Status changed to " + newStatus);
+        log.setMessage("Status updated to " + newStatus);
         logRepository.save(log);
 
         return saved;
