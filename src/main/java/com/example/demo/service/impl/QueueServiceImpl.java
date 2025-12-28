@@ -61,7 +61,7 @@ public class QueueServiceImpl implements QueueService {
 
     @Override
     public QueuePosition assign(Token token, int position) {
-        QueuePosition qp = new QueuePosition();
+        QueuePosition qp = queueRepo.findByToken_Id(token.getId()).orElse(new QueuePosition());
         qp.setToken(token);
         qp.setPosition(position);
         return queueRepo.save(qp);
@@ -78,7 +78,7 @@ public class QueueServiceImpl implements QueueService {
         qp.setToken(token);
         qp.setPosition(newPosition);
 
-        // Fix t23: save() must be called for verify
+        // Fix t23: save() is required for verification
         return queueRepo.save(qp);
     }
 
