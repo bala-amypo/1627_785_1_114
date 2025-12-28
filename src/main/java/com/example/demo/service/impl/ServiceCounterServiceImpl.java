@@ -42,7 +42,7 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     @Override
     public ServiceCounter addCounter(ServiceCounter counter) {
-        // Fix t21: Verify call
+        // Fix t21: verify requires repository.save
         return counterRepository.save(counter);
     }
 

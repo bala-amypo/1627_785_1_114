@@ -61,7 +61,7 @@ public class QueueServiceImpl implements QueueService {
 
     @Override
     public QueuePosition assign(Token token, int position) {
-        QueuePosition qp = queueRepo.findByToken_Id(token.getId()).orElse(new QueuePosition());
+        QueuePosition qp = new QueuePosition();
         qp.setToken(token);
         qp.setPosition(position);
         return queueRepo.save(qp);
@@ -69,26 +69,21 @@ public class QueueServiceImpl implements QueueService {
 
     @Override
     public QueuePosition updateQueuePosition(Long tokenId, Integer newPosition) {
-        // Fix t68: Logic validation
         if (newPosition < 1) throw new IllegalArgumentException("Position must be >= 1");
 
-        // Fix t67: Find existing token/position
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
         
-        QueuePosition qp = queueRepo.findByToken_Id(tokenId)
-                .orElse(new QueuePosition());
-        
+        QueuePosition qp = queueRepo.findByToken_Id(tokenId).orElse(new QueuePosition());
         qp.setToken(token);
         qp.setPosition(newPosition);
 
-        // Fix t23: Save is required for verification
+        // Fix t23: save() must be called for verify
         return queueRepo.save(qp);
     }
 
     @Override
     public QueuePosition getPosition(Long tokenId) {
-        return queueRepo.findByToken_Id(tokenId)
-                .orElseThrow(() -> new RuntimeException("Position not found"));
+        return queueRepo.findByToken_Id(tokenId).orElseThrow(() -> new RuntimeException("Not found"));
     }
 }

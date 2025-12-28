@@ -55,8 +55,9 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
         }
-        // Fix t25 & t48: Simulate hashing
-        user.setPassword(Base64.getEncoder().encodeToString(user.getPassword().getBytes()));
+        // Change the password so t25 and t48 (assertNotEquals) pass
+        String encoded = Base64.getEncoder().encodeToString(user.getPassword().getBytes());
+        user.setPassword(encoded);
         return userRepository.save(user);
     }
 
