@@ -1,67 +1,71 @@
+
+
 package com.example.demo.controller;
 
-import com.example.demo.entity.*;
-import com.example.demo.service.impl.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.dto.StatusUpdateRequest;
+import com.example.demo.dto.TokenResponse;
+import com.example.demo.entity.Token;
+import com.example.demo.service.TokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/tokens")
+@RequestMapping("/tokens")
+@Tag(name = "Token Management", description = "Token issuing and status management")
+@SecurityRequirement(name = "bearerAuth")
 public class TokenController {
-    
-    @Autowired
-    private TokenServiceImpl tokenService;
-    
-    @Autowired
-    private ServiceCounterServiceImpl counterService;
-    
-    @Autowired
-    private QueueServiceImpl queueService;
-    
-    @Autowired
-    private TokenLogServiceImpl logService;
-    
+    private final TokenService tokenService;
+
+    public TokenController(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
+
     @PostMapping("/issue/{counterId}")
-    public ResponseEntity<Token> issueToken(@PathVariable Long counterId) {
+    @Operation(summary = "Issue new token", description = "Issue a new token for the specified counter")
+    @ApiResponse(responseCode = "200", description = "Token issued successfully")
+    public TokenResponse issueToken(@PathVariable Long counterId) {
         Token token = tokenService.issueToken(counterId);
-        return ResponseEntity.ok(token);
+        return mapToResponse(token);
     }
-    
+
+    @PutMapping("/status/{tokenId}")
+    @Operation(summary = "Update token status", description = "Update the status of an existing token")
+    @ApiResponse(responseCode = "200", description = "Token status updated successfully")
+    public TokenResponse updateStatus(@PathVariable Long tokenId, @RequestBody StatusUpdateRequest request) {
+        Token token = tokenService.updateStatus(tokenId, request.getStatus());
+        return mapToResponse(token);
+    }
+
     @GetMapping("/{tokenId}")
-    public ResponseEntity<Token> getToken(@PathVariable Long tokenId) {
+    @Operation(summary = "Get token details", description = "Retrieve details of a specific token")
+    @ApiResponse(responseCode = "200", description = "Token details retrieved successfully")
+    public TokenResponse getToken(@PathVariable Long tokenId) {
         Token token = tokenService.getToken(tokenId);
-        return ResponseEntity.ok(token);
+        return mapToResponse(token);
     }
-    
-    @PutMapping("/{tokenId}/status")
-    public ResponseEntity<Token> updateStatus(@PathVariable Long tokenId, @RequestParam String status) {
-        Token token = tokenService.updateStatus(tokenId, status);
-        return ResponseEntity.ok(token);
-    }
-    
-    @GetMapping("/counters")
-    public ResponseEntity<List<ServiceCounter>> getActiveCounters() {
-        List<ServiceCounter> counters = counterService.getActiveCounters();
-        return ResponseEntity.ok(counters);
-    }
-    
-    @PostMapping("/counters")
-    public ResponseEntity<ServiceCounter> addCounter(@RequestBody ServiceCounter counter) {
-        ServiceCounter created = counterService.addCounter(counter);
-        return ResponseEntity.ok(created);
-    }
-    
-    @GetMapping("/{tokenId}/logs")
-    public ResponseEntity<List<TokenLog>> getTokenLogs(@PathVariable Long tokenId) {
-        List<TokenLog> logs = logService.getLogs(tokenId);
-        return ResponseEntity.ok(logs);
-    }
-    
-    @GetMapping("/{tokenId}/position")
-    public ResponseEntity<QueuePosition> getQueuePosition(@PathVariable Long tokenId) {
-        QueuePosition position = queueService.getPosition(tokenId);
-        return ResponseEntity.ok(position);
+
+    private TokenResponse mapToResponse(Token token) {
+        TokenResponse response = new TokenResponse();
+        response.setId(token.getId());
+        response.setTokenNumber(token.getTokenNumber());
+        response.setStatus(token.getStatus());
+        response.setCounterName(token.getServiceCounter().getCounterName());
+        response.setIssuedAt(token.getIssuedAt());
+        response.setCompletedAt(token.getCompletedAt());
+        return response;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
