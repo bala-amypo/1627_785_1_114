@@ -39,9 +39,9 @@ import com.example.demo.entity.TokenLog;
 import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.TokenLogService;
-
+import org.springframework.stereotype.Service;
 import java.util.List;
-
+@Service
 public class TokenLogServiceImpl implements TokenLogService {
 
     private final TokenLogRepository logRepo;

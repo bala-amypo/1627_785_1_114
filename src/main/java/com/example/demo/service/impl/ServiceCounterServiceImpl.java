@@ -31,7 +31,8 @@ import com.example.demo.repository.ServiceCounterRepository;
 import com.example.demo.service.ServiceCounterService;
 
 import java.util.List;
-
+import org.springframework.stereotype.Service;
+@Service
 public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     private final ServiceCounterRepository counterRepository;

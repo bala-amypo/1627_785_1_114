@@ -99,10 +99,10 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.TokenService;
-
+import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Service
 public class TokenServiceImpl implements TokenService {
 
     private final TokenRepository tokenRepository;
