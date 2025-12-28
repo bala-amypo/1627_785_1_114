@@ -51,39 +51,36 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class QueueServiceImpl implements QueueService {
-    private final QueuePositionRepository queueRepo;
+
+    private final QueuePositionRepository queueRepository;
     private final TokenRepository tokenRepository;
 
-    public QueueServiceImpl(QueuePositionRepository queueRepo, TokenRepository tokenRepository) {
-        this.queueRepo = queueRepo;
+    public QueueServiceImpl(QueuePositionRepository queueRepository,
+                            TokenRepository tokenRepository) {
+        this.queueRepository = queueRepository;
         this.tokenRepository = tokenRepository;
     }
 
     @Override
-    public QueuePosition assign(Token token, int position) {
-        QueuePosition qp = queueRepo.findByToken_Id(token.getId()).orElse(new QueuePosition());
-        qp.setToken(token);
-        qp.setPosition(position);
-        return queueRepo.save(qp);
-    }
+    public QueuePosition updateQueuePosition(Long tokenId, int position) {
 
-    @Override
-    public QueuePosition updateQueuePosition(Long tokenId, Integer newPosition) {
-        if (newPosition < 1) throw new IllegalArgumentException("Position must be >= 1");
+        if (position < 1) {
+            throw new IllegalArgumentException("Position must be >= 1");
+        }
 
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
-        
-        QueuePosition qp = queueRepo.findByToken_Id(tokenId).orElse(new QueuePosition());
-        qp.setToken(token);
-        qp.setPosition(newPosition);
 
-        // Fix t23: save() is required for verification
-        return queueRepo.save(qp);
+        QueuePosition qp = new QueuePosition();
+        qp.setToken(token);
+        qp.setPosition(position);
+
+        return queueRepository.save(qp);
     }
 
     @Override
     public QueuePosition getPosition(Long tokenId) {
-        return queueRepo.findByToken_Id(tokenId).orElseThrow(() -> new RuntimeException("Not found"));
+        return queueRepository.findByToken_Id(tokenId)
+                .orElseThrow(() -> new RuntimeException("Position not found"));
     }
 }
