@@ -30,10 +30,12 @@ import com.example.demo.entity.ServiceCounter;
 import com.example.demo.repository.ServiceCounterRepository;
 import com.example.demo.service.ServiceCounterService;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 public class ServiceCounterServiceImpl implements ServiceCounterService {
+
     private final ServiceCounterRepository counterRepository;
 
     public ServiceCounterServiceImpl(ServiceCounterRepository counterRepository) {
@@ -42,7 +44,6 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     @Override
     public ServiceCounter addCounter(ServiceCounter counter) {
-        // Fix t21: Repository must be called
         return counterRepository.save(counter);
     }
 
