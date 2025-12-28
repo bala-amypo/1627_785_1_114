@@ -63,7 +63,7 @@ public class TokenLogServiceImpl implements TokenLogService {
         log.setMessage(message);
         log.setLoggedAt(LocalDateTime.now());
         
-        // This save() is required to pass test t24
+        // Fix t24: verify requires save
         return logRepo.save(log);
     }
 
