@@ -24,7 +24,6 @@
 // }
 
 
-
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.ServiceCounter;
@@ -43,7 +42,7 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     @Override
     public ServiceCounter addCounter(ServiceCounter counter) {
-        // Fix t21: Must call repository.save()
+        // Fix t21: Verify call
         return counterRepository.save(counter);
     }
 

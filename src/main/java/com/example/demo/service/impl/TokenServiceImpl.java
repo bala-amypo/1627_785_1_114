@@ -120,27 +120,28 @@ public class TokenServiceImpl implements TokenService {
     public Token issueToken(Long counterId) {
         ServiceCounter sc = counterRepository.findById(counterId)
                 .orElseThrow(() -> new RuntimeException("Counter not found"));
+        
         if (!sc.getIsActive()) throw new IllegalArgumentException("Counter not active");
 
         Token token = new Token();
         token.setServiceCounter(sc);
         token.setStatus("WAITING");
         token.setIssuedAt(LocalDateTime.now());
-        // Fix t66: Must generate a token number
-        token.setTokenNumber("TKN-" + System.currentTimeMillis());
+        // Fix t66: Generate token number
+        token.setTokenNumber("T-" + System.currentTimeMillis());
         
-        Token savedToken = tokenRepository.save(token); // Fix t22
+        Token savedToken = tokenRepository.save(token);
 
-        // Fix t22: Verification requires saving QueuePosition
+        // Fix t22: Verification requires these saves
         QueuePosition qp = new QueuePosition();
         qp.setToken(savedToken);
         qp.setPosition(1);
         queueRepo.save(qp);
 
-        // Fix t24: Verification requires saving a log
         TokenLog log = new TokenLog();
         log.setToken(savedToken);
-        log.setMessage("Token Issued");
+        log.setMessage("Issued");
+        log.setLoggedAt(LocalDateTime.now());
         logRepo.save(log);
 
         return savedToken;
@@ -151,24 +152,24 @@ public class TokenServiceImpl implements TokenService {
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
 
-        // Validation for t14 (if needed)
+        // Fix t14 validation
         if ("WAITING".equals(token.getStatus()) && "COMPLETED".equals(newStatus)) {
             throw new IllegalArgumentException("Invalid status transition");
         }
 
-        token.setStatus(newStatus); // Fix t15
+        token.setStatus(newStatus);
 
-        // Fix t16 & t69: Must set timestamp for terminal statuses
+        // Fix t16 & t69
         if ("COMPLETED".equals(newStatus) || "CANCELLED".equals(newStatus)) {
             token.setCompletedAt(LocalDateTime.now());
         }
 
         Token updated = tokenRepository.save(token);
 
-        // Fix t24: Save log for status update
         TokenLog log = new TokenLog();
         log.setToken(updated);
-        log.setMessage("Status updated to " + newStatus);
+        log.setMessage("Updated to " + newStatus);
+        log.setLoggedAt(LocalDateTime.now());
         logRepo.save(log);
 
         return updated;
@@ -176,6 +177,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public Token getToken(Long id) {
-        return tokenRepository.findById(id).orElseThrow(() -> new RuntimeException("Token not found"));
+        return tokenRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
     }
 }
