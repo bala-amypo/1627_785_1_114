@@ -61,22 +61,6 @@ public class QueueServiceImpl implements QueueService {
         this.tokenRepository = tokenRepository;
     }
 
-    // REQUIRED BY INTERFACE
-    @Override
-    public QueuePosition assign(Token token, int position) {
-
-        if (position < 1) {
-            throw new IllegalArgumentException("Position must be >= 1");
-        }
-
-        QueuePosition qp = new QueuePosition();
-        qp.setToken(token);
-        qp.setPosition(position);
-
-        return queueRepository.save(qp);
-    }
-
-    // REQUIRED BY TESTS
     @Override
     public QueuePosition updateQueuePosition(Long tokenId, int position) {
 
@@ -87,7 +71,11 @@ public class QueueServiceImpl implements QueueService {
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
 
-        return assign(token, position);
+        QueuePosition qp = new QueuePosition();
+        qp.setToken(token);
+        qp.setPosition(position);
+
+        return queueRepository.save(qp);
     }
 
     @Override
