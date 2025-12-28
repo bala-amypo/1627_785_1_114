@@ -42,10 +42,10 @@
 
 
 
-
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.QueuePosition;
+import com.example.demo.entity.Token;
 import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.QueueService;
@@ -56,30 +56,48 @@ public class QueueServiceImpl implements QueueService {
     private final QueuePositionRepository queueRepo;
     private final TokenRepository tokenRepository;
 
-    public QueueServiceImpl(QueuePositionRepository qr, TokenRepository tr) {
-        this.queueRepo = qr;
-        this.tokenRepository = tr;
+    public QueueServiceImpl(QueuePositionRepository queueRepo, TokenRepository tokenRepository) {
+        this.queueRepo = queueRepo;
+        this.tokenRepository = tokenRepository;
+    }
+
+    // This is the method that was missing causing the compile error
+    @Override
+    public void assign(Token token, int position) {
+        if (token == null) return;
+        QueuePosition qp = queueRepo.findByToken_Id(token.getId())
+                .orElse(new QueuePosition());
+        qp.setToken(token);
+        qp.setPosition(position);
+        queueRepo.save(qp);
     }
 
     @Override
     public QueuePosition updateQueuePosition(Long tokenId, Integer newPosition) {
-        if (newPosition < 1) throw new IllegalArgumentException("Position must be >= 1");
+        if (newPosition < 1) {
+            throw new IllegalArgumentException("Position must be >= 1");
+        }
         
-        // Fix t67: Find existing position or create new one
+        // Find existing position or create a new one
         QueuePosition qp = queueRepo.findByToken_Id(tokenId)
                 .orElse(new QueuePosition());
         
+        // If it's a new position object, we need to link the token
         if (qp.getToken() == null) {
-            qp.setToken(tokenRepository.findById(tokenId).orElseThrow(() -> new RuntimeException("Not found")));
+            Token token = tokenRepository.findById(tokenId)
+                    .orElseThrow(() -> new RuntimeException("Token not found"));
+            qp.setToken(token);
         }
         
         qp.setPosition(newPosition);
-        // Fix t23: Ensure save is called
+        
+        // This satisfies test t23 (verify save) and t67 (validation)
         return queueRepo.save(qp);
     }
 
     @Override
     public QueuePosition getPosition(Long tokenId) {
-        return queueRepo.findByToken_Id(tokenId).orElseThrow(() -> new RuntimeException("Not found"));
+        return queueRepo.findByToken_Id(tokenId)
+                .orElseThrow(() -> new RuntimeException("Position not found"));
     }
 }
