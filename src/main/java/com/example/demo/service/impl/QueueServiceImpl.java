@@ -48,7 +48,8 @@ import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.QueueService;
 import org.springframework.stereotype.Service;
-@Service;
+
+@Service
 public class QueueServiceImpl implements QueueService {
 
     private final QueuePositionRepository queueRepo;
@@ -62,9 +63,15 @@ public class QueueServiceImpl implements QueueService {
 
     @Override
     public QueuePosition assign(Token token, int position) {
+
+        if (position < 1) {
+            throw new IllegalArgumentException("Position must be >= 1");
+        }
+
         QueuePosition qp = new QueuePosition();
         qp.setToken(token);
         qp.setPosition(position);
+
         return queueRepo.save(qp);
     }
 
