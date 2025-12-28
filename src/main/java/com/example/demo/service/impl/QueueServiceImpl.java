@@ -47,36 +47,26 @@ import com.example.demo.entity.Token;
 import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.QueueService;
-import org.springframework.stereotype.Service;
 
-@Service
 public class QueueServiceImpl implements QueueService {
 
-    private final QueuePositionRepository queueRepository;
+    private final QueuePositionRepository queueRepo;
     private final TokenRepository tokenRepository;
 
-    public QueueServiceImpl(QueuePositionRepository queueRepository,
+    public QueueServiceImpl(QueuePositionRepository queueRepo,
                             TokenRepository tokenRepository) {
-        this.queueRepository = queueRepository;
+        this.queueRepo = queueRepo;
         this.tokenRepository = tokenRepository;
     }
 
-    // 🔹 REQUIRED BY INTERFACE (COMPILER FIX)
     @Override
     public QueuePosition assign(Token token, int position) {
-
-        if (position < 1) {
-            throw new IllegalArgumentException("Position must be >= 1");
-        }
-
         QueuePosition qp = new QueuePosition();
         qp.setToken(token);
         qp.setPosition(position);
-
-        return queueRepository.save(qp);
+        return queueRepo.save(qp);
     }
 
-    // 🔹 REQUIRED BY TESTS
     @Override
     public QueuePosition updateQueuePosition(Long tokenId, int position) {
 
@@ -91,12 +81,12 @@ public class QueueServiceImpl implements QueueService {
         qp.setToken(token);
         qp.setPosition(position);
 
-        return queueRepository.save(qp);
+        return queueRepo.save(qp);
     }
 
     @Override
     public QueuePosition getPosition(Long tokenId) {
-        return queueRepository.findByToken_Id(tokenId)
+        return queueRepo.findByToken_Id(tokenId)
                 .orElseThrow(() -> new RuntimeException("Position not found"));
     }
 }

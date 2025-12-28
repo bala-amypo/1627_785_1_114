@@ -29,11 +29,9 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.ServiceCounter;
 import com.example.demo.repository.ServiceCounterRepository;
 import com.example.demo.service.ServiceCounterService;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     private final ServiceCounterRepository counterRepository;
@@ -44,6 +42,7 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     @Override
     public ServiceCounter addCounter(ServiceCounter counter) {
+        // MUST save SAME object
         return counterRepository.save(counter);
     }
 

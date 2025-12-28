@@ -99,27 +99,25 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.TokenService;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
 public class TokenServiceImpl implements TokenService {
 
     private final TokenRepository tokenRepository;
     private final ServiceCounterRepository counterRepository;
-    private final TokenLogRepository logRepository;
-    private final QueuePositionRepository queueRepository;
+    private final TokenLogRepository logRepo;
+    private final QueuePositionRepository queueRepo;
 
     public TokenServiceImpl(TokenRepository tokenRepository,
                             ServiceCounterRepository counterRepository,
-                            TokenLogRepository logRepository,
-                            QueuePositionRepository queueRepository) {
+                            TokenLogRepository logRepo,
+                            QueuePositionRepository queueRepo) {
         this.tokenRepository = tokenRepository;
         this.counterRepository = counterRepository;
-        this.logRepository = logRepository;
-        this.queueRepository = queueRepository;
+        this.logRepo = logRepo;
+        this.queueRepo = queueRepo;
     }
 
     @Override
@@ -148,12 +146,12 @@ public class TokenServiceImpl implements TokenService {
         QueuePosition qp = new QueuePosition();
         qp.setToken(saved);
         qp.setPosition(seq);
-        queueRepository.save(qp);
+        queueRepo.save(qp);
 
         TokenLog log = new TokenLog();
         log.setToken(saved);
         log.setMessage("Token issued");
-        logRepository.save(log);
+        logRepo.save(log);
 
         return saved;
     }
@@ -186,7 +184,7 @@ public class TokenServiceImpl implements TokenService {
         TokenLog log = new TokenLog();
         log.setToken(saved);
         log.setMessage("Status updated to " + newStatus);
-        logRepository.save(log);
+        logRepo.save(log);
 
         return saved;
     }
