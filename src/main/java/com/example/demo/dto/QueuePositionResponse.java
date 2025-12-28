@@ -1,6 +1,4 @@
 
-
-
 package com.example.demo.dto;
 
 public class QueuePositionResponse {
